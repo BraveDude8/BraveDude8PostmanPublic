@@ -1,0 +1,653 @@
+{
+	"info": {
+		"_postman_id": "b573a227-fafd-4fa2-b4f5-e4878f2ea39e",
+		"name": "Brave's Public Scripts",
+		"description": "## Starting guide;\n\nOpen \"Production\" variables, add two called \"AccountUsername\" and \"AccountPassword\" and put your MD details in the \"initial value\" field. All other required variables are preloaded in the collection.\n\nMake sure to run the login script before doing anything else, as I haven't figured out refresh tokens and the login will only last for 15 minutes as a result. This applies to the Client login too, if you're doing something with that.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login (run this before anything else)",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b45d8421-e33d-47cf-ad8a-21ffb6fde0c8",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Save auth\", () => {\r",
+									"    let data = pm.response.json();\r",
+									"\r",
+									"pm.environment.set(\"token.session\", data.token.session);\r",
+									"pm.environment.set(\"token.refresh\", data.token.refresh);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "34a3edb5-f6e2-4051-a68b-0e65110eed27",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{AccountUsername}}\",\r\n    \"password\": \"{{AccountPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/auth/login"
+					},
+					"response": []
+				},
+				{
+					"name": "refresh token",
+					"id": "419406f9-7857-4eb9-a766-cf6721f48f44",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"token\": \"{{token.refresh}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/auth/refresh"
+					},
+					"response": []
+				},
+				{
+					"name": "auth",
+					"id": "0665eb00-3130-400d-a731-dd2167a87fca",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token.session}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/auth/check"
+					},
+					"response": []
+				}
+			],
+			"id": "c498a93f-540f-4f95-b520-c01aa0592a62"
+		},
+		{
+			"name": "Multiple Chapter Move",
+			"item": [
+				{
+					"name": "Move Chapter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6ca01d9c-1738-4383-953c-e7e5e5237b91",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Save auth\", () => {\r",
+									"    let data = pm.response.json();\r",
+									"\r",
+									"\r",
+									"\r",
+									"    });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "580146e5-e9ed-4b67-ab8f-c4d16ea7de14",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"manga\":\"8dafd1ee-f5d4-4119-b287-e8963b1b34a3\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "api.mangadex.org/admin/chapter/{{ChapterIDArray}}/move"
+					},
+					"response": []
+				}
+			],
+			"id": "5942db25-0cdf-4f7e-b48a-8f324456ce5f"
+		},
+		{
+			"name": "Multiple Chapter Rename",
+			"item": [
+				{
+					"name": "Get chapter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b10ffc03-99bc-4045-8fb5-4c90bb7abe29",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Save auth\", () => {\r",
+									"    let data = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"ChapterVersion\", data.data.attributes.version);\r",
+									"pm.collectionVariables.set(\"ChapterID\", data.data.id);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "c16287c8-5b1f-4eb8-921e-2b71a344bd13",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/chapter/{{ChapterRenameIDArray}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Set title",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3a5037de-a5df-4a37-986d-d7d7c9787518",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "6566baf0-91e6-43ea-a0ba-67e2a874a809",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"{{ChapterTitleArray}}\",\r\n    \"version\": {{ChapterVersion}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/chapter/{{ChapterRenameIDArray}}",
+						"description": "For this example, we are borrowing a simple request from [Postman Echo](https://docs.postman-echo.com/). This is Postman's service to test and demonstrate sample API calls from your REST clients. \n\nThis endpoint echoes the HTTP headers, request parameters, and the complete URI requested. We will be sending 2 parameters with our request: `city` and `ramen`. The parameter data will be supplied in the data file that we will upload when using the Postman Collection Runner to run the collection.\n\nUnder the **Tests** tab, write your tests in JavaScript. The example test shown here relies on Postman's `pm.*` API. See more examples under the **Tests** tab in the Postman app.\n\n```\npm.test(\"Body contains City\", function () {\n    \n    pm.expect(pm.response.text()).to.include(pm.iterationData.get(\"City\"));\n    \n    // older syntax still works too: with dot or bracket notation\n    pm.expect(pm.response.text()).to.include(data.City); \n    console.log(\"City to be sent: \" + data[\"City\"]); \n});\n\n```"
+					},
+					"response": []
+				}
+			],
+			"id": "d76048fc-6dcf-4275-be31-6f8b987b6bed"
+		},
+		{
+			"name": "Multiple Chapter Renumber",
+			"item": [
+				{
+					"name": "Get chapter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b10ffc03-99bc-4045-8fb5-4c90bb7abe29",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Save auth\", () => {\r",
+									"    let data = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"ChapterVersion\", data.data.attributes.version);\r",
+									"pm.collectionVariables.set(\"ChapterID\", data.data.id);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "96aded25-d940-446e-8594-2f6ceb028fa1",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/chapter/{{ChapterRenumberIDArray}}"
+					},
+					"response": []
+				},
+				{
+					"name": "Set chapter number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3a5037de-a5df-4a37-986d-d7d7c9787518",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "d96638e6-1016-49e1-b445-9cfd83df8036",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"chapter\": \"{{NewChapterNumberArray}}\",\r\n    \"volume\": \"{{NewVolumeNumberArray}}\",\r\n    \"version\": {{ChapterVersion}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseUrl}}/chapter/{{ChapterRenumberIDArray}}",
+						"description": "For this example, we are borrowing a simple request from [Postman Echo](https://docs.postman-echo.com/). This is Postman's service to test and demonstrate sample API calls from your REST clients. \n\nThis endpoint echoes the HTTP headers, request parameters, and the complete URI requested. We will be sending 2 parameters with our request: `city` and `ramen`. The parameter data will be supplied in the data file that we will upload when using the Postman Collection Runner to run the collection.\n\nUnder the **Tests** tab, write your tests in JavaScript. The example test shown here relies on Postman's `pm.*` API. See more examples under the **Tests** tab in the Postman app.\n\n```\npm.test(\"Body contains City\", function () {\n    \n    pm.expect(pm.response.text()).to.include(pm.iterationData.get(\"City\"));\n    \n    // older syntax still works too: with dot or bracket notation\n    pm.expect(pm.response.text()).to.include(data.City); \n    console.log(\"City to be sent: \" + data[\"City\"]); \n});\n\n```"
+					},
+					"response": []
+				}
+			],
+			"id": "ce8e0c50-ba6c-4071-9d49-f9a329f1147e"
+		},
+		{
+			"name": "Client",
+			"item": [
+				{
+					"name": "Get Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "3e4d0e57-c819-4091-96e1-40ee2653eea9",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Save auth\", () => {\r",
+									"    let data = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"ClientID\", data.data[0].id);\r",
+									"pm.collectionVariables.set(\"ExternalClientID\", data.data[0].attributes.externalClientId);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "b00e3749-ca44-41a8-a36c-737c64b2b05c",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/client"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Client Secret",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f112eacd-cf2e-461c-a727-c27377818b0d",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Save auth\", () => {\r",
+									"    let data = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"ClientSecret\", data.data);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "21cfcba6-9b84-4def-bf3f-e08fbba1ed3a",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseUrl}}/client/{{ClientID}}/secret"
+					},
+					"response": []
+				},
+				{
+					"name": "Log Into Client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "984d5a30-8436-478e-985f-85e0e3cd6f98",
+								"exec": [
+									"const responseJson = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"  pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Save auth\", () => {\r",
+									"    let data = pm.response.json();\r",
+									"\r",
+									"pm.collectionVariables.set(\"ClientAccessToken\", data.access_token);\r",
+									"pm.collectionVariables.set(\"ClientRefreshToken\", data.refresh_token);\r",
+									"pm.collectionVariables.set(\"ClientIdToken\", data.id_token);\r",
+									"pm.collectionVariables.set(\"ClientSessionState\", data.session_state);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"id": "47fdb480-12ca-40c7-b535-f81a8afce6c0",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": {
+								"scope": "profile",
+								"password": "{{AccountPassword}}",
+								"username": "{{AccountUsername}}",
+								"accessTokenUrl": "https://auth.mangadex.org/realms/mangadex/protocol/openid-connect/token",
+								"grant_type": "password_credentials",
+								"tokenName": "MD Client Token",
+								"redirect_uri": "https://auth.mangadex.org/realms/mangadex/protocol/openid-connect/token",
+								"clientId": "{{ClientID}}",
+								"clientSecret": "{{ClientSecret}}",
+								"addTokenTo": "header"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "password",
+									"type": "text"
+								},
+								{
+									"key": "username",
+									"value": "{{AccountUsername}}",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "{{AccountPassword}}",
+									"type": "text"
+								},
+								{
+									"key": "client_id",
+									"value": "{{ExternalClientID}}",
+									"type": "text"
+								},
+								{
+									"key": "client_secret",
+									"value": "{{ClientSecret}}",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "openid groups email profile",
+									"type": "text"
+								}
+							]
+						},
+						"url": "https://auth.mangadex.org/realms/mangadex/protocol/openid-connect/token"
+					},
+					"response": []
+				}
+			],
+			"id": "219229cb-c0ea-476d-8013-d6695c94eb0d"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": {
+			"token": "{{token.session}}"
+		}
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "58664d0c-ae26-4f76-8fcb-a373c6141e1e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "e42bc2cc-0d64-4c08-a2cd-b5edba230e49",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://api.mangadex.org",
+			"type": "string"
+		},
+		{
+			"key": "token.session",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "token.refresh",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "logged.userId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "logged.username",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "uploadSessionId",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "lastUploadedChapter",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "GroupID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "GroupVersion",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ChapterEditID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ChapterEditVersion",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "GroupIDArray",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ChapterIDArray",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ClientID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ClientSecret",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ReindexObjectType",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ReindexObjectID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ChapterRenumberIDArray",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ChapterMoveMangaID",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "DeleteGroupIDArray",
+			"value": ""
+		},
+		{
+			"key": "ChapterRenameIDArray",
+			"value": ""
+		},
+		{
+			"key": "ChapterVersion",
+			"value": "",
+			"type": "any"
+		},
+		{
+			"key": "ChapterID",
+			"value": "",
+			"type": "any"
+		},
+		{
+			"key": "ChapterTitleArray",
+			"value": "",
+			"type": "default"
+		},
+		{
+			"key": "NewChapterNumberArray",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "NewVolumeNumberArray",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "ExternalClientID",
+			"value": ""
+		},
+		{
+			"key": "ClientAccessToken",
+			"value": ""
+		},
+		{
+			"key": "ClientRefreshToken",
+			"value": ""
+		},
+		{
+			"key": "ClientIdToken",
+			"value": ""
+		},
+		{
+			"key": "ClientSessionState",
+			"value": ""
+		}
+	]
+}
